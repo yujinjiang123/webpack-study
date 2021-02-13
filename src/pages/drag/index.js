@@ -17,11 +17,14 @@ EventUtil.addHandler(drag,'dragenter',(e)=>{
     const {target}=e;
     if(target===drag) return;
     const position=dragElement.compareDocumentPosition(target); //判断拖拽元素与进入元素的位置关系
+    const targetRect = target.getBoundingClientRect();
     if(position===Node.DOCUMENT_POSITION_PRECEDING){
         drag.insertBefore(dragElement,target);
     }else if(position===Node.DOCUMENT_POSITION_FOLLOWING){
         drag.insertBefore(dragElement,target.nextSibling);
     }
+    const targetAfter = target.getBoundingClientRect();
+    animation(target,targetRect,targetAfter);
 });
 
 EventUtil.addHandler(drag,'dragend',(e)=>{
@@ -29,4 +32,19 @@ EventUtil.addHandler(drag,'dragend',(e)=>{
     if(target===drag) return;
     target.classList.remove(DRAG_CLASS_NAME);
 });
+
+
+function animation(target,targetRect,targetAfter){
+    target.style.transition='none';
+    target.style.transform=`translate3d(${targetRect.left - targetAfter.left}px,${ targetRect.top - targetAfter.top }px,0)`;
+    target.offsetWidth; //触发重绘
+    target.style.transition='all 300ms';
+    target.style.transform='translate3d(0,0,0)';
+}
+
+
+
+let box=document.getElementById("box");
+
+
 

@@ -14,9 +14,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: transform .2s ease-out;
     }
 
     .drag{
-        background-color: aquamarine;
+        background-color: darkorange;
+        transform:scale(.8,.8);
     }
+
+    .update{
+    
+        transition:transform .2s;
+        transform:translate(0,-80px);
+    }
+
 }
