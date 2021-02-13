@@ -17,14 +17,30 @@ EventUtil.addHandler(drag,'dragenter',(e)=>{
     const {target}=e;
     if(target===drag) return;
     const position=dragElement.compareDocumentPosition(target); //判断拖拽元素与进入元素的位置关系
-    const targetRect = target.getBoundingClientRect();
+    const animateList=[];
     if(position===Node.DOCUMENT_POSITION_PRECEDING){
+        let previous=dragElement.previousElementSibling;
+        while(previous&&previous!==target){
+            animateList.push({target:previous,before:previous.getBoundingClientRect()});
+            previous=previous.previousElementSibling;
+        }
+        animateList.push({target,before:previous.getBoundingClientRect()});
         drag.insertBefore(dragElement,target);
+        animateList.forEach(a=>{
+            animation(a.target,a.before,a.target.getBoundingClientRect());
+        })
     }else if(position===Node.DOCUMENT_POSITION_FOLLOWING){
-        drag.insertBefore(dragElement,target.nextSibling);
+        let next=dragElement.nextElementSibling;
+        while(next&&next!==target){
+            animateList.push({target:next,before:next.getBoundingClientRect()});
+            next=next.nextElementSibling;
+        }
+        animateList.push({target,before:next.getBoundingClientRect()});
+        drag.insertBefore(dragElement,target.nextElementSibling);
+        animateList.forEach(a=>{
+            animation(a.target,a.before,a.target.getBoundingClientRect());
+        })
     }
-    const targetAfter = target.getBoundingClientRect();
-    animation(target,targetRect,targetAfter);
 });
 
 EventUtil.addHandler(drag,'dragend',(e)=>{
